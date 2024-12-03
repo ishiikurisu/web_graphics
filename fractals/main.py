@@ -1,6 +1,3 @@
-import cmath
-
-
 ITER_LIMIT = 100
 HEIGHT = 500
 WIDTH = 500
@@ -10,7 +7,7 @@ def pixels_to_complex_plane(x, y):
     r = (x / WIDTH) * 4.0 - 2.0 
     i = (y / HEIGHT) * 4.0 - 2.0
 
-    return r + 1j * i
+    return r + (1j * i)
 
 
 def escape_time(f, z0):
@@ -18,10 +15,10 @@ def escape_time(f, z0):
     i = 0
 
     while abs(z) < 2.0 and i < ITER_LIMIT:
-        z = f(z)
+        z = f(z0, z)
         i += 1
 
-    return abs(z) < 2.0    
+    return abs(z) > 2.0 
 
 
 def escape_time_fractal(f):
@@ -37,16 +34,16 @@ def escape_time_fractal(f):
     return outlet
 
 
-def mandelbrot(z):
-    return z ** 2 + z
+def mandelbrot(z0, z):
+    return z ** 2 + z0
 
 
 def new_julia(c0):
-    return lambda z: z ** 2 + c0
+    return lambda z0, z: (z ** 2) + c0
 
 
-def burning_ship(z):
-    return (abs(z.real) + 1j * abs(z.imag)) ** 2
+def burning_ship(z0, z):
+    return (abs(z.real) + 1j * abs(z.imag)) ** 2 + z0
 
 
 def matrix_to_image(inlet, output_file):
@@ -54,16 +51,20 @@ def matrix_to_image(inlet, output_file):
         fp.write(f"P1 {WIDTH} {HEIGHT} ")
         for line in inlet:
             for escaped in line:
-                fp.write(f"{1 if escaped else 0} ")
+                fp.write(f"{0 if escaped else 1} ")
 
 
 def main():
     print("--- # mandelbrot set")
-    # TODO fix me!
     mandelbrot_set = escape_time_fractal(mandelbrot)
     matrix_to_image(mandelbrot_set, "mandelbrot.ppm")
 
-    # TODO julia fractal
+    print("--- # julia fractal")
+    julia = new_julia(-0.8406 + 0.1242j)
+    # julia = new_julia(0 + 0j)
+    julia_set = escape_time_fractal(julia)
+    matrix_to_image(julia_set, "julia.ppm")
+
     # TODO julia fractal animation
     print("--- # burning ship fractal")
     burning_ship_set = escape_time_fractal(burning_ship)
