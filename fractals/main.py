@@ -1,6 +1,15 @@
+from math import (
+    pi,
+    cos,
+    sin,
+)
+import cmath
+
+
 ITER_LIMIT = 100
 HEIGHT = 500
 WIDTH = 500
+ANIMATION_LENGTH = 120
 
 
 def pixels_to_complex_plane(x, y):
@@ -46,6 +55,12 @@ def burning_ship(z0, z):
     return (abs(z.real) + 1j * abs(z.imag)) ** 2 + z0
 
 
+def generate_around_circle(center, radius, iter_limit):
+    for i in range(iter_limit):
+        p = 2 * pi * i / iter_limit
+        yield center + radius * (cos(p) + 1j * sin(p))
+
+
 def matrix_to_image(inlet, output_file):
     with open(output_file, "w") as fp:
         fp.write(f"P1 {WIDTH} {HEIGHT} ")
@@ -61,11 +76,16 @@ def main():
 
     print("--- # julia fractal")
     julia = new_julia(-0.8406 + 0.1242j)
-    # julia = new_julia(0 + 0j)
     julia_set = escape_time_fractal(julia)
     matrix_to_image(julia_set, "julia.ppm")
 
-    # TODO julia fractal animation
+    print("--- # julia fractal animation")
+    for i, point in enumerate(generate_around_circle(-0.2 + 0.6j, 0.2, ANIMATION_LENGTH)):
+        print("--- # # iteration %03d" % (i))
+        julia = new_julia(point)
+        julia_set = escape_time_fractal(julia)
+        matrix_to_image(julia_set, "julia/i%03d.ppm" % i)
+
     print("--- # burning ship fractal")
     burning_ship_set = escape_time_fractal(burning_ship)
     matrix_to_image(burning_ship_set, "burning_ship.ppm")
