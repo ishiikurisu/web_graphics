@@ -79,6 +79,11 @@ def main():
     julia_set = escape_time_fractal(julia)
     matrix_to_image(julia_set, "julia.ppm")
 
+    print("--- # julia fractal similar to mandelbrot")
+    julia = new_julia(-1.25)
+    julia_set = escape_time_fractal(julia)
+    matrix_to_image(julia_set, "julia-mandelbrot.ppm")
+
     print("--- # julia fractal animation")
     for i, point in enumerate(generate_around_circle(-0.2 + 0.6j, 0.2, ANIMATION_LENGTH)):
         print("--- # # iteration %03d" % (i))
