@@ -80,7 +80,7 @@ def main():
     matrix_to_image(julia_set, "julia.ppm")
 
     print("--- # julia fractal similar to mandelbrot")
-    julia = new_julia(-1.25)
+    julia = new_julia(-0.5723968883 + 0.4578286188j)
     julia_set = escape_time_fractal(julia)
     matrix_to_image(julia_set, "julia-mandelbrot.ppm")
 
